@@ -17,6 +17,8 @@ import { Query } from './models/query';
 export class App implements OnInit {
   page = signal<number>(1);
   elementsPerPage = signal<number>(10);
+  formSet: boolean = false;
+  sortSet: boolean = false;
   defaultSearch: string = `${DB_URL}${BOOKS_URL}?_page=${this.page()}&_per_page=${this.elementsPerPage()}`;
   queryDefaultValue: Query = {
     page: 1,
@@ -69,19 +71,29 @@ export class App implements OnInit {
   }
 
   changePage(index: number) {
+    if(!this.formSet) {
+      this.query.set(this.queryDefaultValue);
+      if(this.sortSet){
+        this.query.update((q) => ({...q, sortBy: this.sortBy()}));
+      }
+    }
     this.query.update((q) => ({ ...q, page: index }));
     this.setApiQuery(this.query());
   }
 
   orderBy(key: string) {
     this.sortBy.set(key);
+    this.sortSet = true;
     this.selectedPage = 1;
-    this.query.update((q) => ({ ...q, sortBy: key }));
+    this.query.update((q) => ({ ...q, sortBy: key, page: 1 }));
     this.setApiQuery(this.query());
   }
 
   filterSearch(form?: SearchFormInterface) {
+    this.query.set(this.queryDefaultValue);
+    this.formSet = false;
     if (form) {
+      this.formSet = true;
       this.query.set(this.queryDefaultValue);
       if (form.title) {
         this.query.update((q) => ({ ...q, title: form.title }));
@@ -100,11 +112,14 @@ export class App implements OnInit {
       }
       this.query.update((q) => ({ ...q, page: 1, elementsPerPage: 10}));
       this.setApiQuery(this.query());
-
     }
   }
 
   initialSearch() {
+    this.formSet = false;
+    this.sortSet = false;
+    this.sortBy.set('');
+    this.selectedPage = 1;
     this.searchApi.set(`${DB_URL}${BOOKS_URL}?_page=1&_per_page=10`);
   }
 
