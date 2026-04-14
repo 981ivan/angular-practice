@@ -21,6 +21,4 @@ import { BeforeChristPipe } from '../pipes/before-christ.pipe';
 export class BookItem {
   book = input.required<Book>();
   index = input.required<number>();
-  //todo aggiungere sequenzialità numeri in tabella e ripartire da qui
-
 }
