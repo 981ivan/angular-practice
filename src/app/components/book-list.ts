@@ -29,12 +29,7 @@ import { TableHeader } from './table-header';
         </thead>
         <tbody>
           @for (b of books.value(); track b.id) {
-            <tr
-              app-book-item
-              [book]="b"
-              [index]="$index"
-              class="hover:bg-base-300"
-            ></tr>
+            <tr app-book-item [book]="b" [index]="$index" class="hover:bg-base-300"></tr>
           } @empty {
             <span>There are no results :(</span>
           }
@@ -44,7 +39,8 @@ import { TableHeader } from './table-header';
         <app-paginator
           [numberOfPages]="numberOfPages()"
           [selectedPage]="selectedPage()"
-          (changePage)="changePage($event)" />
+          (changePage)="changePage($event)"
+        />
       </div>
     </div>
   `,
@@ -53,7 +49,13 @@ import { TableHeader } from './table-header';
 export class BookList {
   baseApi: string = `${DB_URL}${BOOKS_URL}`;
 
-  books = httpResource<Book[]>(() => this.completeApi());
+  books = httpResource<Book[]>(() => this.completeApi(), {
+    parse: (res) => {
+      const mappedRes: Book[] = res as Book[];
+      mappedRes.map((b, i) => b.index = this.getIndex(i));
+      return mappedRes;
+    },
+  });
 
   totalItems = computed(() => this.books.headers()?.get('x-total-count'));
 
@@ -78,7 +80,6 @@ export class BookList {
     if (this.sortBy()) {
       api += `&_sort=${this.sortBy()}`;
     }
-
     return api;
   });
 
@@ -92,5 +93,9 @@ export class BookList {
 
   orderBy(key: string) {
     this.sortBy.set(key);
+  }
+
+  getIndex (index: number): number {
+    return (this.page() - 1) * this.elementsPerPage() + index + 1;
   }
 }

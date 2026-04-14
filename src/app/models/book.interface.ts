@@ -7,4 +7,5 @@ export interface Book {
   pages: number;
   title: string;
   year: number;
+  index: number;
 }

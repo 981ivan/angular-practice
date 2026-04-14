@@ -1,13 +1,14 @@
 import { Component, input, output } from '@angular/core';
 import { NgIcon } from '@ng-icons/core';
+import { UpperCasePipe } from '@angular/common';
 
 @Component({
   selector: '[app-table-header]',
-  imports: [NgIcon],
+  imports: [NgIcon, UpperCasePipe],
   template: `
     <span (click)="orderList()">
       @if (title()) {
-        {{ title() }}
+        {{ title() | uppercase }}
       }
       @if (title() && sortBy() === title()) {
         <ng-icon name="coolCaretUpMD"></ng-icon>
@@ -21,9 +22,9 @@ export class TableHeader {
   sortBy = input<string>();
   sortingList = output<string>();
 
-  orderList(){
-    if(this.title()){
-      this.sortingList.emit(this.title()!)
+  orderList() {
+    if (this.title()) {
+      this.sortingList.emit(this.title()!);
     }
   }
 }
