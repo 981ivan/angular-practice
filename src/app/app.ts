@@ -1,16 +1,18 @@
-import { Component, computed, OnInit, signal } from '@angular/core';
+import { Component, computed, ElementRef, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { BookList } from './components/book-list';
-import { httpResource } from '@angular/common/http';
+import { HttpClient, httpResource } from '@angular/common/http';
 import { Book } from './models/book.interface';
 import { BOOKS_URL, DB_URL } from './constants/constants';
 import { Paginator } from './components/paginator';
 import { SearchForm } from './components/search-form';
 import { SearchFormInterface } from './models/search-form.interface';
 import { Query } from './models/query';
+import { ModalDelete } from './components/modals/modal-delete';
+import { Toast } from './components/utils/toast';
 
 @Component({
   selector: 'app-root',
-  imports: [BookList, Paginator, SearchForm],
+  imports: [BookList, Paginator, SearchForm, ModalDelete, Toast],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
@@ -29,7 +31,7 @@ export class App implements OnInit {
     year: undefined,
     language: '',
   };
-  totalSearchApi = signal<string>(`${DB_URL}${BOOKS_URL}`);
+  booksApi = signal<string>(`${DB_URL}${BOOKS_URL}`);
   searchApi = signal<string>(this.defaultSearch);
   sortBy = signal<string>('');
   selectedPage = 1;
@@ -40,6 +42,13 @@ export class App implements OnInit {
     const total = Number(items) || 0;
     return Math.ceil(total / 10);
   });
+  http = inject(HttpClient);
+  @ViewChild('modalDelete') modalDeleteComponent!: ModalDelete;
+  bookSelectedForDeletion = signal<Book | null>(null);
+  showToast = signal<boolean>(false);
+  toastPositionCls = signal<string>('toast-top toast-end');
+  toastStatusCls = signal<string>('alert-success');
+  toastMessage = signal<string>('');
 
   books = httpResource<Book[]>(() => this.searchApi(), {
     parse: (res) => {
@@ -50,7 +59,7 @@ export class App implements OnInit {
   });
 
   allYearsAndLanguages = httpResource<{ allYears: number[]; allLanguages: string[] }>(
-    () => this.totalSearchApi(),
+    () => this.booksApi(),
     {
       parse: (res) => {
         const mappedRes: Book[] = res as Book[];
@@ -71,12 +80,13 @@ export class App implements OnInit {
   }
 
   changePage(index: number) {
-    if(!this.formSet) {
+    if (!this.formSet) {
       this.query.set(this.queryDefaultValue);
-      if(this.sortSet){
-        this.query.update((q) => ({...q, sortBy: this.sortBy()}));
+      if (this.sortSet) {
+        this.query.update((q) => ({ ...q, sortBy: this.sortBy() }));
       }
     }
+    this.page.set(index);
     this.query.update((q) => ({ ...q, page: index }));
     this.setApiQuery(this.query());
   }
@@ -100,17 +110,14 @@ export class App implements OnInit {
       }
       if (form.author) {
         this.query.update((q) => ({ ...q, author: form.author }));
-
       }
       if (form.language) {
         this.query.update((q) => ({ ...q, language: form.language }));
-
       }
       if (form.year) {
         this.query.update((q) => ({ ...q, year: +form.year }));
-
       }
-      this.query.update((q) => ({ ...q, page: 1, elementsPerPage: 10}));
+      this.query.update((q) => ({ ...q, page: 1, elementsPerPage: 10 }));
       this.setApiQuery(this.query());
     }
   }
@@ -128,13 +135,13 @@ export class App implements OnInit {
   }
 
   setApiQuery(query: Query) {
-    let queryReq = `?`
-    if(query.page){
+    let queryReq = `?`;
+    if (query.page) {
       queryReq += `&_page=${query.page}`;
     } else {
       queryReq += `&_per_page=1`;
     }
-    if(query.elementsPerPage){
+    if (query.elementsPerPage) {
       queryReq += `&_per_page=${query.elementsPerPage}`;
     } else {
       queryReq += `&_per_page=10`;
@@ -159,5 +166,23 @@ export class App implements OnInit {
       }
     }
     this.setApi(queryReq);
+  }
+
+  confirmDelete(book: Book) {
+    console.log('item to delete', book);
+    console.log(this.modalDeleteComponent);
+    this.bookSelectedForDeletion.set(book);
+    this.modalDeleteComponent.modalDelete.nativeElement.show();
+  }
+
+  deleteBook() {
+    this.http.delete(`${this.booksApi()}/${this.bookSelectedForDeletion()?.id}`).subscribe(() => {
+      this.bookSelectedForDeletion.set(null);
+      this.toastMessage.set('Book deleted successfully');
+      this.showToast.set(true);
+      setTimeout(() => {
+        this.showToast.set(false);
+      }, 5000);
+    });
   }
 }

@@ -26,7 +26,13 @@ import { TableHeader } from './table-header';
         </thead>
         <tbody>
           @for (b of books(); track b.id) {
-            <tr app-book-item [book]="b" [index]="$index" class="hover:bg-base-300"></tr>
+            <tr
+              app-book-item
+              [book]="b"
+              [index]="$index"
+              class="hover:bg-base-300"
+              (delete)="delete.emit(b)"
+            ></tr>
           } @empty {
             <span>There are no results :(</span>
           }
@@ -37,9 +43,9 @@ import { TableHeader } from './table-header';
   styles: ``,
 })
 export class BookList {
-
   books = input<Book[] | undefined>([]);
   sortBy = input<string>('');
+  delete = output<Book>();
   orderedBy = output<string>();
   tableHeaderConfig: string[] = ['', 'title', 'author', 'year', 'language', ''];
 
