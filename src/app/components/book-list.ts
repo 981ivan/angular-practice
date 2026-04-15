@@ -47,7 +47,7 @@ export class BookList {
   sortBy = input<string>('');
   delete = output<Book>();
   orderedBy = output<string>();
-  tableHeaderConfig: string[] = ['', 'title', 'author', 'year', 'language', ''];
+  tableHeaderConfig: string[] = ['', 'title', 'author', 'year', 'language', 'country', ''];
 
   constructor() {}
 

@@ -16,6 +16,7 @@ import { ModalInfo } from './modals/modal-info';
     <td>{{ book().author }}</td>
     <td>{{ book().year | bcPipe }}</td>
     <td>{{ book().language }}</td>
+    <td>{{ book().country }}</td>
     <td>
       <div class="flex justify-around">
         <button class="btn btn-accent hover:bg-yellow-100 text-green-800">
