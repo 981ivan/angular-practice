@@ -5,6 +5,7 @@ import { UpperCasePipe } from '@angular/common';
 @Component({
   selector: '[app-table-header]',
   imports: [NgIcon, UpperCasePipe],
+  standalone: true,
   template: `
     <span (click)="orderList()">
       @if (title()) {

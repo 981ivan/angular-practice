@@ -1,10 +1,11 @@
 import { Component, ElementRef, input, output, ViewChild } from '@angular/core';
-import { Book } from '../../models/book.interface';
+import { BookInterface } from '../../models/book.interface';
 import { UpperCasePipe } from '@angular/common';
 
 @Component({
   selector: 'app-modal-delete',
   imports: [UpperCasePipe],
+  standalone: true,
   template: `
     <dialog #modalDelete class="modal">
       <div class="modal-box">
@@ -29,7 +30,7 @@ import { UpperCasePipe } from '@angular/common';
   styles: ``,
 })
 export class ModalDelete {
-  bookInDeletion = input<Book | null>();
+  bookInDeletion = input<BookInterface | null>();
   delete = output();
   @ViewChild('modalDelete') modalDelete!: ElementRef<HTMLDialogElement>;
 }

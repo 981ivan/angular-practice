@@ -4,8 +4,9 @@ import { NgClass } from '@angular/common';
 @Component({
   selector: 'app-toast',
   imports: [NgClass],
+  standalone: true,
   template: `
-    <div [ngClass]="['toast', positionCls()]">
+    <div [ngClass]="['toast', 'z-50', positionCls()]">
       <div [ngClass]="['alert', statusCls()]">
         <span>{{ message() }}</span>
       </div>

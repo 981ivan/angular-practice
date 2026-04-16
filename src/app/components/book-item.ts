@@ -1,5 +1,5 @@
 import { Component, input, output } from '@angular/core';
-import { Book } from '../models/book.interface';
+import { BookInterface } from '../models/book.interface';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { coolEditPencil01, coolInfo, coolTrashFull } from '@ng-icons/coolicons';
 import { BeforeChristPipe } from '../pipes/before-christ.pipe';
@@ -22,15 +22,17 @@ import { ModalInfo } from './modals/modal-info';
         <button class="btn btn-accent hover:bg-yellow-100 text-green-800">
           <ng-icon (click)="modalInfo.show()" name="coolInfo" title="Click for more info..." />
         </button>
-        <button class="btn btn-accent hover:bg-yellow-100 text-blue-800">
+        <button
+          (click)="this.onEdit($event)"
+          class="btn btn-accent hover:bg-yellow-100 text-blue-800"
+        >
           <ng-icon title="Click to edit this entry..." name="coolEditPencil01" />
         </button>
-        <button class="btn btn-accent hover:bg-yellow-100 hover:text-error text-red-800">
-          <ng-icon
-            (click)="delete.emit(book())"
-            title="Click to delete this entry..."
-            name="coolTrashFull"
-          />
+        <button
+          (click)="this.onDelete($event)"
+          class="btn btn-accent hover:bg-yellow-100 hover:text-error text-red-800"
+        >
+          <ng-icon title="Click to delete this entry..." name="coolTrashFull" />
         </button>
       </div>
     </td>
@@ -39,7 +41,18 @@ import { ModalInfo } from './modals/modal-info';
   `,
 })
 export class BookItem {
-  book = input.required<Book>();
+  book = input.required<BookInterface>();
   index = input.required<number>();
-  delete = output<Book>();
+  edit = output<BookInterface>();
+  delete = output<BookInterface>();
+
+  onEdit(ev: MouseEvent) {
+    ev.preventDefault();
+    this.edit.emit(this.book());
+  }
+
+  onDelete(ev: MouseEvent) {
+    ev.preventDefault();
+    this.delete.emit(this.book());
+  }
 }

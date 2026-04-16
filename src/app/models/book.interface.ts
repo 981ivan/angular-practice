@@ -1,4 +1,4 @@
-export interface Book {
+export interface BookInterface {
   id: number;
   author: string;
   country: string;
@@ -9,4 +9,3 @@ export interface Book {
   year: number;
   index: number;
 }
-``

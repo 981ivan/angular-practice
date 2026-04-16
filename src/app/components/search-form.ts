@@ -9,6 +9,7 @@ import { BeforeChristPipe } from '../pipes/before-christ.pipe';
   selector: 'app-search-form',
   imports: [FormField, NgIcon, BeforeChristPipe],
   viewProviders: [provideIcons({ coolArrowReload02 })],
+  standalone: true,
   template: `
     <form (submit)="onSubmit($event)">
       <fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-auto border p-4 m-10">

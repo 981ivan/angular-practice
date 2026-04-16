@@ -1,5 +1,5 @@
 import { Component, input, output } from '@angular/core';
-import { Book } from '../models/book.interface';
+import { BookInterface } from '../models/book.interface';
 import { BookItem } from './book-item';
 import { provideIcons } from '@ng-icons/core';
 import { coolCaretUpMD } from '@ng-icons/coolicons';
@@ -9,6 +9,7 @@ import { TableHeader } from './table-header';
   selector: 'app-book-list',
   imports: [BookItem, TableHeader],
   viewProviders: [provideIcons({ coolCaretUpMD })],
+  standalone: true,
   template: `
     <div class="overflow-x-auto m-5">
       <table class="table table-zebra">
@@ -31,6 +32,7 @@ import { TableHeader } from './table-header';
               [book]="b"
               [index]="$index"
               class="hover:bg-base-300"
+              (edit)="edit.emit(b)"
               (delete)="delete.emit(b)"
             ></tr>
           } @empty {
@@ -43,9 +45,10 @@ import { TableHeader } from './table-header';
   styles: ``,
 })
 export class BookList {
-  books = input<Book[] | undefined>([]);
+  books = input<BookInterface[] | undefined>([]);
   sortBy = input<string>('');
-  delete = output<Book>();
+  edit = output<BookInterface>();
+  delete = output<BookInterface>();
   orderedBy = output<string>();
   tableHeaderConfig: string[] = ['', 'title', 'author', 'year', 'language', 'country', ''];
 

@@ -1,8 +1,9 @@
-import { Component, computed, effect, input, model, output, Signal } from '@angular/core';
+import { Component, computed, input, model, output, Signal } from '@angular/core';
 
 @Component({
   selector: 'app-paginator',
   imports: [],
+  standalone: true,
   template: `
     <div class="m-5 flex justify-end">
       @if (pages().length > 0) {

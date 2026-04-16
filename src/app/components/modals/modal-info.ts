@@ -1,5 +1,5 @@
 import { Component, ElementRef, input, ViewChild } from '@angular/core';
-import { Book } from '../../models/book.interface';
+import { BookInterface } from '../../models/book.interface';
 import { UpperCasePipe } from '@angular/common';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { bootstrapWikipedia } from '@ng-icons/bootstrap-icons';
@@ -45,7 +45,7 @@ import { BeforeChristPipe } from '../../pipes/before-christ.pipe';
 })
 export class ModalInfo {
   @ViewChild('modalInfo') modalElement!: ElementRef<HTMLDialogElement>;
-  book = input.required<Book>();
+  book = input.required<BookInterface>();
 
   show() {
     this.modalElement.nativeElement.showModal();
