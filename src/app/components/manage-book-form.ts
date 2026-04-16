@@ -5,8 +5,6 @@ import { BeforeChristPipe } from '../pipes/before-christ.pipe';
 import { Router } from '@angular/router';
 import { UpperCasePipe } from '@angular/common';
 import { Book } from '../models/book';
-import { httpResource } from '@angular/common/http';
-import { CountryInterface } from '../models/country.interface';
 
 @Component({
   selector: 'app-manage-book-form',
@@ -87,7 +85,7 @@ import { CountryInterface } from '../models/country.interface';
   styles: ``,
 })
 export class ManageBookForm {
-  countryApi: string = 'https://restcountries.com/v3.1/all?fields=name'
+  countryApi: string = 'https://restcountries.com/v3.1/all?fields=name';
   router = inject(Router);
   book = input.required<BookInterface>();
   editing = input<boolean>(false);
@@ -99,8 +97,6 @@ export class ManageBookForm {
       return 'Add New Book';
     }
   });
-
-  countries = httpResource <CountryInterface[]>(() => this.countryApi);
 
   backHome() {
     this.router.navigate(['']);
