@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, computed, effect, inject, OnInit, signal } from '@angular/core';
+import { AfterViewInit, Component, computed, effect, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Navbar } from './navbar';
 import { ManageBookForm } from './manage-book-form';
