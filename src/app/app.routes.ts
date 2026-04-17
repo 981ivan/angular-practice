@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
 import { HomePage } from './components/home-page';
-import { ManageBookPage } from './components/manage-book-page';
 
 export const routes: Routes = [
   {
@@ -9,10 +8,10 @@ export const routes: Routes = [
   },
   {
     path: 'add-new-book',
-    component: ManageBookPage,
+    loadComponent: () => import('./components/manage-book-page'),
   },
   {
     path: `edit-book`,
-    component: ManageBookPage,
+    loadComponent: () => import('./components/manage-book-page'),
   },
 ];

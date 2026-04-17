@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { AfterViewInit, Component, computed, effect, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Navbar } from './navbar';
 import { ManageBookForm } from './manage-book-form';
@@ -13,15 +13,17 @@ import { Book } from '../models/book';
   standalone: true,
   template: `
     <app-navbar [context]="'addEditBook'" />
-    <app-manage-book-form
-      [book]="bookToEditSave()"
-      [editing]="!adding()"
-      (onSaveEdit)="saveEdit($event)"
-    />
+    @if (adding() || bookToEditSave().author) {
+      <app-manage-book-form
+        [book]="bookToEditSave()"
+        [editing]="!adding()"
+        (onSaveEdit)="saveEdit($event)"
+      />
+    }
   `,
   styles: ``,
 })
-export class ManageBookPage implements OnInit {
+export default class ManageBookPage implements OnInit, AfterViewInit {
   adding = signal<boolean>(false);
   bookId = signal<number | null>(null);
   bookToAdd = signal<BookInterface>({
@@ -48,7 +50,11 @@ export class ManageBookPage implements OnInit {
     private route: ActivatedRoute,
     private http: HttpClient,
     private router: Router,
-  ) {}
+  ) {
+    effect(() => {
+      console.log(this.bookToEditSave());
+    });
+  }
 
   ngOnInit() {
     this.route.queryParams.subscribe((params) => {
@@ -60,6 +66,8 @@ export class ManageBookPage implements OnInit {
     });
   }
 
+  ngAfterViewInit() {}
+
   saveEdit(ev: { method: string; book: Book }) {
     switch (ev.method) {
       case 'POST':
@@ -68,9 +76,9 @@ export class ManageBookPage implements OnInit {
           this.router.navigate([''], {
             state: {
               saved: true,
-              bookSaved: bookSaved
+              bookSaved: bookSaved,
             },
-          })
+          });
         });
         break;
       case 'PATCH':
