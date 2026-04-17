@@ -12,7 +12,7 @@ import { BeforeChristPipe } from '../pipes/before-christ.pipe';
   standalone: true,
   template: `
     <form (submit)="onSubmit($event)">
-      <fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-auto border p-4 m-10">
+      <fieldset class="fieldset bg-lime-50 border-base-300 rounded-box w-256 border p-4 m-auto gap-2">
         <legend class="fieldset-legend">Search books...</legend>
 
         <div class="flex flex-row place-content-around">

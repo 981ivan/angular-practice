@@ -17,6 +17,8 @@ import { coolBookOpen } from '@ng-icons/coolicons';
         My book app
         <span class="flex justify-end"><ng-icon name="coolBookOpen" /></span>
       </h3>
+
+      <span class="font-bold italic">We care about reading, not CSS...</span>
       @if (context() === 'home') {
         <app-generic-btn
           [icon]="'coolAddPlus'"

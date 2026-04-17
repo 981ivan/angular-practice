@@ -36,11 +36,13 @@ import { Navbar } from './navbar';
       (delete)="confirmDelete($event)"
     />
 
-    <app-paginator
-      [numberOfPages]="numberOfPages()"
-      [(selectedPage)]="selectedPage"
-      (changePage)="changePage($event)"
-    />
+    @if(numberOfPages() > 1) {
+      <app-paginator
+          [numberOfPages]="numberOfPages()"
+          [(selectedPage)]="selectedPage"
+          (changePage)="changePage($event)"
+      />
+    }
 
     <app-modal-delete
       #modalDelete
