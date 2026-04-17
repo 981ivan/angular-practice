@@ -131,6 +131,7 @@ export class ManageBookForm {
         pages: this.book().pages ?? undefined,
         title: this.book().title ?? '',
         year: this.book().year ?? undefined,
+        id: this.book().id ?? undefined,
       };
     });
   }
