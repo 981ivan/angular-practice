@@ -136,12 +136,6 @@ export class ManageBookForm {
   }
 
   mainAction() {
-    console.log(this.bookForm().value());
-    let method = 'POST';
-    if (this.editing()) {
-      method = 'PATCH';
-    }
-
-    this.onSaveEdit.emit({ method: method, book: this.bookForm().value() });
+    this.onSaveEdit.emit({ method: this.editing() ? 'PATCH' : 'POST', book: this.bookForm().value() });
   }
 }
