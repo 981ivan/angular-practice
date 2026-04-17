@@ -19,8 +19,11 @@ import { ModalInfo } from './modals/modal-info';
     <td>{{ book().country }}</td>
     <td>
       <div class="flex justify-around">
-        <button class="btn btn-accent hover:bg-yellow-100 text-green-800">
-          <ng-icon (click)="modalInfo.show()" name="coolInfo" title="Click for more info..." />
+        <button
+          class="btn btn-accent hover:bg-yellow-100 text-green-800"
+          (click)="modalInfo.show()"
+        >
+          <ng-icon name="coolInfo" title="Click for more info..." />
         </button>
         <button
           (click)="this.onEdit($event)"
