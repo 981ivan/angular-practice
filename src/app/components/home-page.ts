@@ -109,7 +109,7 @@ export class HomePage implements OnInit {
         const mappedRes: BookInterface[] = res as BookInterface[];
         mappedRes.map((b, i) => (b.index = this.getIndex(i)));
         const allYears = [...new Set(mappedRes.map((b) => b.year))].sort((a, b) => a - b);
-        const allLanguages = [...new Set(mappedRes.map((b) => b.language))];
+        const allLanguages = [...new Set(mappedRes.map((b) => b.language))].sort((a, b) => a.localeCompare(b));
         return { allYears: allYears, allLanguages: allLanguages };
       },
     },

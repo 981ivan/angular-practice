@@ -5,7 +5,7 @@
       "author": "Chinua Achebe",
       "country": "Nigeria",
       "language": "English",
-      "link": "https://en.wikipedia.org/wiki/Things_Fall_Apart\n",
+      "link": "https://en.wikipedia.org/wiki/Things_Fall_Apart",
       "pages": 209,
       "title": "Things Fall Apart",
       "year": 1958
@@ -851,14 +851,24 @@
       "year": 1927
     },
     {
-      "author": "test",
-      "country": "Egypt",
-      "language": "Arabic",
-      "link": "www.google.it",
-      "pages": 250,
-      "title": "test",
-      "year": 1992,
-      "id": 100
+      "author": "Cormac McCarthy",
+      "country": "United States",
+      "language": "English",
+      "link": "https://en.wikipedia.org/wiki/No_Country_for_Old_Men_(novel)",
+      "pages": 308,
+      "title": "No Country For Old Men",
+      "year": 2005,
+      "id": 101
+    },
+    {
+      "author": "Banana Yoshimoto",
+      "country": "Japan",
+      "language": "Japanese",
+      "link": "https://en.wikipedia.org/wiki/Banana_Yoshimoto",
+      "pages": 201,
+      "title": "Hawaii dreaming",
+      "year": 2007,
+      "id": 102
     }
   ]
 }

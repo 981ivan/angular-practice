@@ -50,11 +50,7 @@ export default class ManageBookPage implements OnInit, AfterViewInit {
     private route: ActivatedRoute,
     private http: HttpClient,
     private router: Router,
-  ) {
-    effect(() => {
-      console.log(this.bookToEditSave());
-    });
-  }
+  ) {}
 
   ngOnInit() {
     this.route.queryParams.subscribe((params) => {

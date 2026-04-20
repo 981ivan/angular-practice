@@ -2,13 +2,13 @@ import { Component, computed, HostBinding, inject, input, output, signal } from 
 import { BookInterface } from '../models/book.interface';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { UpperCasePipe } from '@angular/common';
+import {JsonPipe, UpperCasePipe } from '@angular/common';
 import { Book } from '../models/book';
-import { form, FormField } from '@angular/forms/signals';
+import { form, FormField, minLength, pattern, required } from '@angular/forms/signals';
 
 @Component({
   selector: 'app-manage-book-form',
-  imports: [FormsModule, UpperCasePipe, ReactiveFormsModule, FormField],
+  imports: [FormsModule, UpperCasePipe, ReactiveFormsModule, FormField, JsonPipe],
   standalone: true,
   template: ` @if (book()) {
     <div class="flex align-middle w-fit mt-50 px-36">
@@ -24,6 +24,11 @@ import { form, FormField } from '@angular/forms/signals';
                 class="input"
                 [formField]="bookForm.title"
               />
+              @if (submitted() && bookForm.title().invalid()) {
+                <span class="text-red-500">
+                  {{ bookForm.title().errors()?.[0]?.message }}
+                </span>
+              }
             </label>
             <label class="input">
               <span class="label">Author</span>
@@ -33,6 +38,11 @@ import { form, FormField } from '@angular/forms/signals';
                 class="input"
                 [formField]="bookForm.author"
               />
+              @if (submitted() && bookForm.author().invalid()) {
+                <span class="text-red-500">
+                  {{ bookForm.author().errors()?.[0]?.message }}
+                </span>
+              }
             </label>
           </div>
           <div class="flex columns-12 justify-around gap-2">
@@ -44,6 +54,11 @@ import { form, FormField } from '@angular/forms/signals';
                 class="input"
                 [formField]="bookForm.country"
               />
+              @if (submitted() && bookForm.country().invalid()) {
+                <span class="text-red-500">
+                  {{ bookForm.country().errors()?.[0]?.message }}
+                </span>
+              }
             </label>
             <label class="input">
               <span class="label">Language</span>
@@ -53,6 +68,11 @@ import { form, FormField } from '@angular/forms/signals';
                 class="input"
                 [formField]="bookForm.language"
               />
+              @if (submitted() && bookForm.language().invalid()) {
+                <span class="text-red-500">
+                  {{ bookForm.language().errors()?.[0]?.message }}
+                </span>
+              }
             </label>
           </div>
           <div class="flex columns-12 justify-around gap-2">
@@ -64,6 +84,11 @@ import { form, FormField } from '@angular/forms/signals';
                 class="input"
                 [formField]="bookForm.year"
               />
+              @if (submitted() && bookForm.year().invalid()) {
+                <span class="text-red-500">
+                  {{ bookForm.year().errors()?.[0]?.message }}
+                </span>
+              }
             </label>
             <label class="input">
               <span class="label">Pages</span>
@@ -73,6 +98,11 @@ import { form, FormField } from '@angular/forms/signals';
                 class="input"
                 [formField]="bookForm.pages"
               />
+              @if (submitted() && bookForm.pages().invalid()) {
+                <span class="text-red-500">
+                  {{ bookForm.pages().errors()?.[0]?.message }}
+                </span>
+              }
             </label>
           </div>
           <div class="flex column-12">
@@ -84,6 +114,11 @@ import { form, FormField } from '@angular/forms/signals';
                 class="input"
                 [formField]="bookForm.link"
               />
+              @for (err of bookForm.link().errors(); track err) {
+                @if (submitted() && err.message) {
+                  <span class="text-red-500">{{ err.message }}</span>
+                }
+              }
             </label>
           </div>
           <div class="card-actions justify-end mt-5">
@@ -103,9 +138,24 @@ export class ManageBookForm {
   @HostBinding('class.w-full') someOtherField: boolean = true;
   @HostBinding('class.justify-center') anotherFieldInTheWall: boolean = true;
   router = inject(Router);
+  linkRegex = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
   book = input.required<BookInterface>();
+  submitted = signal(false);
   formModel = signal<Book>(new Book('', '', '', '', 0, '', 0, undefined));
-  bookForm = form(this.formModel);
+  bookForm = form(this.formModel, (schema) => {
+    required(schema.author, { message: 'This field is required!' });
+    required(schema.country, { message: 'This field is required!' });
+    required(schema.language, { message: 'This field is required!' });
+    required(schema.link, { message: 'This field is required!' });
+    required(schema.pages, { message: 'This field is required!' });
+    required(schema.title, { message: 'This field is required!' });
+    required(schema.year, { message: 'This field is required!' });
+    minLength(schema.author, 5, { message: 'This field must be at least 5 characters!' });
+    minLength(schema.country, 3, { message: 'This field must be at least 3 characters!' });
+    minLength(schema.language, 3, { message: 'This field must be at least 3 characters!' });
+    minLength(schema.title, 2, { message: 'This field must be at least 2 characters!' });
+    pattern(schema.link, this.linkRegex, { message: 'Link must be valid!' });
+  });
   editing = input<boolean>(false);
   onSaveEdit = output<{ method: string; book: Book }>();
   title = computed(() => {
@@ -137,6 +187,12 @@ export class ManageBookForm {
   }
 
   mainAction() {
+    this.submitted.set(true);
+
+    if (this.bookForm().invalid()) {
+      return;
+    }
+
     this.onSaveEdit.emit({ method: this.editing() ? 'PATCH' : 'POST', book: this.bookForm().value() });
   }
 }
