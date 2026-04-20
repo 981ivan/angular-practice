@@ -3,3 +3,26 @@
 @plugin "daisyui" {
   themes: light --default, dark --prefersdark, nord;
 }
+
+@keyframes marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-100%); }
+}
+
+@keyframes marquee2 {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(0%); }
+}
+
+.animate-marquee {
+  animation: marquee 25s linear infinite;
+}
+
+.animate-marquee2 {
+  animation: marquee2 25s linear infinite;
+}
+
+.pause-hover:hover .animate-marquee,
+.pause-hover:hover .animate-marquee2 {
+  animation-play-state: paused;
+}
