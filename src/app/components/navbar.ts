@@ -1,10 +1,11 @@
-import { Component, inject, input } from '@angular/core';
+import { Component, inject, input, signal } from '@angular/core';
 import { GenericBtn } from './utils/generic-btn';
 import { Router } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { coolBookOpen } from '@ng-icons/coolicons';
 import { httpResource } from '@angular/common/http';
 import { JokeInterface } from '../models/joke.interface';
+import { HumorResponseInterface } from '../models/humor-response.interface';
 
 @Component({
   selector: 'app-navbar',
@@ -27,11 +28,18 @@ import { JokeInterface } from '../models/joke.interface';
           <span class="mx-4 alert alert-warning py-1">In fact for this animation...</span>
           <span class="mx-4 alert alert-error py-1">...I've Asked Gemini</span>
           <span class="mx-4 alert alert-info py-1">
-            Free joke: {{ joke?.value()?.jokes?.[0]?.joke }}</span
-          >
-          <span class="mx-4 alert alert-success py-1" (click)="joke.reload()"
-            >Liked the joke? Click here for a new one!</span
-          >
+            @if (instanceOfJoke(joke)) {
+              Free joke:
+              {{ $any(joke?.value())?.jokes?.[0]?.joke }}
+            } @else if (joke.error()) {
+              There should be a joke here (check code) but I'm cheaper than air and don't have money to buy a joke subscription (max 10 x day)
+            }
+          </span>
+          @if (!joke.error()) {
+            <span class="mx-4 alert alert-success py-1" (click)="joke.reload()"
+              >Liked the joke? Click here for a new one!</span
+            >
+          }
         </div>
       </div>
 
@@ -59,8 +67,25 @@ import { JokeInterface } from '../models/joke.interface';
 export class Navbar {
   router = inject(Router);
   context = input<string>('home');
-  joke = httpResource<JokeInterface>(
-    () => 'https://api.humorapi.com/jokes/search?api-key=5ce495347c6b4172bf47e387659df482',
+  humorApi = signal<string>(
+    'https://api.humorapi.com/jokes/search?api-key=5ce495347c6b4172bf47e387659df482',
+  );
+  jokeExhausted = signal<boolean>(false);
+  joke = httpResource<JokeInterface | HumorResponseInterface>(
+    //10 barzellette al giorno
+    () => this.humorApi(),
+    {
+      parse: (res) => {
+        let mappedRes: JokeInterface | HumorResponseInterface;
+        if (this.instanceOfJoke(res)) {
+          mappedRes = res as JokeInterface;
+        } else {
+          this.jokeExhausted.set(true);
+          mappedRes = res as HumorResponseInterface;
+        }
+        return mappedRes;
+      },
+    },
   );
   addNewBook() {
     this.router.navigate(['/add-new-book'], {
@@ -70,5 +95,9 @@ export class Navbar {
 
   backHome() {
     this.router.navigate(['']);
+  }
+
+  instanceOfJoke(object: any): object is JokeInterface {
+    return 'jokes' in object;
   }
 }
