@@ -13,6 +13,8 @@ import { UpperCasePipe } from '@angular/common';
       }
       @if (title() && sortBy() === title()) {
         <ng-icon name="coolCaretUpMD"></ng-icon>
+      } @else if (title() && sortBy() === '-' + title()) {
+        <ng-icon name="coolCaretDownMD"></ng-icon>
       }
     </span>
   `,

@@ -53,6 +53,7 @@ export default class ManageBookPage implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit() {
+    console.log(this.route);
     this.route.queryParams.subscribe((params) => {
       if (!!params['addNewBook']) {
         this.adding.set(true);

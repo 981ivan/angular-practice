@@ -2,13 +2,13 @@ import { Component, input, output } from '@angular/core';
 import { BookInterface } from '../models/book.interface';
 import { BookItem } from './book-item';
 import { provideIcons } from '@ng-icons/core';
-import { coolCaretUpMD } from '@ng-icons/coolicons';
+import { coolCaretUpMD, coolCaretDownMD } from '@ng-icons/coolicons';
 import { TableHeader } from './table-header';
 
 @Component({
   selector: 'app-book-list',
   imports: [BookItem, TableHeader],
-  viewProviders: [provideIcons({ coolCaretUpMD })],
+  viewProviders: [provideIcons({ coolCaretUpMD, coolCaretDownMD })],
   standalone: true,
   template: `
     <div class="overflow-x-auto m-5">

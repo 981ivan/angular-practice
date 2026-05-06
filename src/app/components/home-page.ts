@@ -17,10 +17,7 @@ import { Navbar } from './navbar';
   imports: [BookList, ModalDelete, Paginator, SearchForm, Toast, Navbar],
   standalone: true,
   template: `
-
-    <app-navbar
-      [context]="'home'"
-    />
+    <app-navbar [context]="'home'" />
 
     <app-search-form
       (search)="filterSearch($event)"
@@ -36,11 +33,11 @@ import { Navbar } from './navbar';
       (delete)="confirmDelete($event)"
     />
 
-    @if(numberOfPages() > 1) {
+    @if (numberOfPages() > 1) {
       <app-paginator
-          [numberOfPages]="numberOfPages()"
-          [(selectedPage)]="selectedPage"
-          (changePage)="changePage($event)"
+        [numberOfPages]="numberOfPages()"
+        [(selectedPage)]="selectedPage"
+        (changePage)="changePage($event)"
       />
     }
 
@@ -88,6 +85,7 @@ export class HomePage implements OnInit {
     return Math.ceil(total / 10);
   });
   http = inject(HttpClient);
+  router = inject(Router);
   @ViewChild('modalDelete') modalDeleteComponent!: ModalDelete;
   bookSelectedForDeletion = signal<BookInterface | null>(null);
   showToast = signal<boolean>(false);
@@ -109,24 +107,23 @@ export class HomePage implements OnInit {
         const mappedRes: BookInterface[] = res as BookInterface[];
         mappedRes.map((b, i) => (b.index = this.getIndex(i)));
         const allYears = [...new Set(mappedRes.map((b) => b.year))].sort((a, b) => a - b);
-        const allLanguages = [...new Set(mappedRes.map((b) => b.language))].sort((a, b) => a.localeCompare(b));
+        const allLanguages = [...new Set(mappedRes.map((b) => b.language))].sort((a, b) =>
+          a.localeCompare(b),
+        );
         return { allYears: allYears, allLanguages: allLanguages };
       },
     },
   );
 
-  constructor(
-    private router: Router,
-    private activatedRoute: ActivatedRoute) {
-  }
-
   ngOnInit() {
-    if(history.state && history.state.saved){
+    if (history.state && history.state.saved) {
       this.manageToastMessage(`${history.state.bookSaved.title.toUpperCase()} saved successfully!`);
     } else if (history.state && history.state.edited) {
-      this.manageToastMessage(`${history.state.bookEdited.title.toUpperCase()} edited successfully!`);
+      this.manageToastMessage(
+        `${history.state.bookEdited.title.toUpperCase()} edited successfully!`,
+      );
     }
-      this.initialSearch();
+    this.initialSearch();
   }
 
   getIndex(index: number): number {
@@ -146,6 +143,11 @@ export class HomePage implements OnInit {
   }
 
   orderBy(key: string) {
+    if (key.startsWith('-') && this.sortBy() === key.substring(1)) {
+      key = key.substring(1);
+    } else if (this.sortBy() === key) {
+      key = '-' + key;
+    }
     this.sortBy.set(key);
     this.sortSet = true;
     this.selectedPage = 1;
@@ -177,6 +179,7 @@ export class HomePage implements OnInit {
   }
 
   initialSearch() {
+    this.query.set(this.queryDefaultValue);
     this.formSet = false;
     this.sortSet = false;
     this.sortBy.set('');
@@ -189,36 +192,38 @@ export class HomePage implements OnInit {
   }
 
   setApiQuery(query: Query) {
-    let queryReq = `?`;
+    const queryParts: string[] = [];
     if (query.page) {
-      queryReq += `&_page=${query.page}`;
+      queryParts.push(`_page=${query.page}`);
     } else {
-      queryReq += `&_per_page=1`;
+      queryParts.push(`_page=1`);
     }
     if (query.elementsPerPage) {
-      queryReq += `&_per_page=${query.elementsPerPage}`;
+      queryParts.push(`_per_page=${query.elementsPerPage}`);
     } else {
-      queryReq += `&_per_page=10`;
+      queryParts.push(`_per_page=10`);
     }
     for (const [key, value] of Object.entries(query)) {
       if (value) {
         switch (key) {
           case 'title':
           case 'author':
-            queryReq += `&${key}_like=${value}`;
+            queryParts.push(`${key}_like=${value}`);
             break;
           case 'language':
           case 'year':
-            queryReq += `&${key}=${value}`;
+            queryParts.push(`${key}=${value}`);
             break;
           case 'sortBy':
-            queryReq += `&_sort=${value}`;
+            queryParts.push(`_sort=${value}`);
             break;
           default:
             break;
         }
       }
     }
+    const queryReq = `?${queryParts.join('&')}`;
+
     this.setApi(queryReq);
   }
 
@@ -230,8 +235,8 @@ export class HomePage implements OnInit {
   editBook(book: BookInterface) {
     this.router.navigate([`/edit-book`], {
       queryParams: {
-        bookId: book.id
-      }
+        bookId: book.id,
+      },
     });
   }
 
@@ -245,7 +250,7 @@ export class HomePage implements OnInit {
 
   manageToastMessage(msg: string, status?: string) {
     this.toastMessage.set(msg);
-    if(status){
+    if (status) {
       this.toastStatusCls.set(status);
     }
     this.showToast.set(true);
@@ -253,5 +258,4 @@ export class HomePage implements OnInit {
       this.showToast.set(false);
     }, 2000);
   }
-
 }

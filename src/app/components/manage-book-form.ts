@@ -2,13 +2,13 @@ import { Component, computed, HostBinding, inject, input, output, signal } from 
 import { BookInterface } from '../models/book.interface';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import {JsonPipe, UpperCasePipe } from '@angular/common';
+import { UpperCasePipe } from '@angular/common';
 import { Book } from '../models/book';
 import { form, FormField, minLength, pattern, required } from '@angular/forms/signals';
 
 @Component({
   selector: 'app-manage-book-form',
-  imports: [FormsModule, UpperCasePipe, ReactiveFormsModule, FormField, JsonPipe],
+  imports: [FormsModule, UpperCasePipe, ReactiveFormsModule, FormField],
   standalone: true,
   template: ` @if (book()) {
     <div class="flex align-middle w-fit mt-50 px-36">
@@ -25,9 +25,11 @@ import { form, FormField, minLength, pattern, required } from '@angular/forms/si
                 [formField]="bookForm.title"
               />
               @if (submitted() && bookForm.title().invalid()) {
-                <span class="text-red-500">
-                  {{ bookForm.title().errors()?.[0]?.message }}
-                </span>
+                @for (error of bookForm.title().errors(); track error) {
+                  <span class="text-red-500">
+                    {{ error.message }}
+                  </span>
+                }
               }
             </label>
             <label class="input">
@@ -39,9 +41,11 @@ import { form, FormField, minLength, pattern, required } from '@angular/forms/si
                 [formField]="bookForm.author"
               />
               @if (submitted() && bookForm.author().invalid()) {
-                <span class="text-red-500">
-                  {{ bookForm.author().errors()?.[0]?.message }}
-                </span>
+                @for (error of bookForm.author().errors(); track error) {
+                  <span class="text-red-500">
+                    {{ error.message }}
+                  </span>
+                }
               }
             </label>
           </div>
@@ -55,9 +59,11 @@ import { form, FormField, minLength, pattern, required } from '@angular/forms/si
                 [formField]="bookForm.country"
               />
               @if (submitted() && bookForm.country().invalid()) {
-                <span class="text-red-500">
-                  {{ bookForm.country().errors()?.[0]?.message }}
-                </span>
+                @for (error of bookForm.country().errors(); track error) {
+                  <span class="text-red-500">
+                    {{ error.message }}
+                  </span>
+                }
               }
             </label>
             <label class="input">
@@ -69,9 +75,11 @@ import { form, FormField, minLength, pattern, required } from '@angular/forms/si
                 [formField]="bookForm.language"
               />
               @if (submitted() && bookForm.language().invalid()) {
-                <span class="text-red-500">
-                  {{ bookForm.language().errors()?.[0]?.message }}
-                </span>
+                @for (error of bookForm.language().errors(); track error) {
+                  <span class="text-red-500">
+                    {{ error.message }}
+                  </span>
+                }
               }
             </label>
           </div>
@@ -85,9 +93,11 @@ import { form, FormField, minLength, pattern, required } from '@angular/forms/si
                 [formField]="bookForm.year"
               />
               @if (submitted() && bookForm.year().invalid()) {
-                <span class="text-red-500">
-                  {{ bookForm.year().errors()?.[0]?.message }}
-                </span>
+                @for (error of bookForm.year().errors(); track error) {
+                  <span class="text-red-500">
+                    {{ error.message }}
+                  </span>
+                }
               }
             </label>
             <label class="input">
@@ -99,9 +109,9 @@ import { form, FormField, minLength, pattern, required } from '@angular/forms/si
                 [formField]="bookForm.pages"
               />
               @if (submitted() && bookForm.pages().invalid()) {
-                <span class="text-red-500">
-                  {{ bookForm.pages().errors()?.[0]?.message }}
-                </span>
+                @for (error of bookForm.pages().errors(); track error) {
+                  <span class="text-red-500">{{ error.message }}</span>
+                }
               }
             </label>
           </div>
@@ -112,9 +122,9 @@ import { form, FormField, minLength, pattern, required } from '@angular/forms/si
                 type="text"
                 placeholder="Type here"
                 class="input"
-                [formField]="bookForm.link"
+                [formField]="bookForm.webLink"
               />
-              @for (err of bookForm.link().errors(); track err) {
+              @for (err of bookForm.webLink().errors(); track err) {
                 @if (submitted() && err.message) {
                   <span class="text-red-500">{{ err.message }}</span>
                 }
@@ -146,7 +156,7 @@ export class ManageBookForm {
     required(schema.author, { message: 'This field is required!' });
     required(schema.country, { message: 'This field is required!' });
     required(schema.language, { message: 'This field is required!' });
-    required(schema.link, { message: 'This field is required!' });
+    required(schema.webLink, { message: 'This field is required!' });
     required(schema.pages, { message: 'This field is required!' });
     required(schema.title, { message: 'This field is required!' });
     required(schema.year, { message: 'This field is required!' });
@@ -154,7 +164,7 @@ export class ManageBookForm {
     minLength(schema.country, 3, { message: 'This field must be at least 3 characters!' });
     minLength(schema.language, 3, { message: 'This field must be at least 3 characters!' });
     minLength(schema.title, 2, { message: 'This field must be at least 2 characters!' });
-    pattern(schema.link, this.linkRegex, { message: 'Link must be valid!' });
+    pattern(schema.webLink, this.linkRegex, { message: 'Link must be valid!' });
   });
   editing = input<boolean>(false);
   onSaveEdit = output<{ method: string; book: Book }>();
@@ -177,7 +187,7 @@ export class ManageBookForm {
         author: this.book().author ?? '',
         country: this.book().country ?? '',
         language: this.book().language ?? '',
-        link: this.book().link ?? '',
+        webLink: this.book().link ?? '',
         pages: this.book().pages ?? undefined,
         title: this.book().title ?? '',
         year: this.book().year ?? undefined,
@@ -193,6 +203,9 @@ export class ManageBookForm {
       return;
     }
 
-    this.onSaveEdit.emit({ method: this.editing() ? 'PATCH' : 'POST', book: this.bookForm().value() });
+    this.onSaveEdit.emit({
+      method: this.editing() ? 'PATCH' : 'POST',
+      book: this.bookForm().value(),
+    });
   }
 }
