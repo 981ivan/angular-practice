@@ -9,7 +9,7 @@ import { Query } from '../models/query';
 import { HttpClient, httpResource } from '@angular/common/http';
 import { BookInterface } from '../models/book.interface';
 import { SearchFormInterface } from '../models/search-form.interface';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { Navbar } from './navbar';
 
 @Component({
@@ -20,7 +20,7 @@ import { Navbar } from './navbar';
     <app-navbar [context]="'home'" />
 
     <app-search-form
-      (search)="filterSearch($event)"
+      (searchFiltered)="filterSearch($event)"
       (cleanSearch)="initialSearch()"
       [allYearsAndLanguages]="allYearsAndLanguages.value()"
     />
@@ -61,9 +61,9 @@ import { Navbar } from './navbar';
 export class HomePage implements OnInit {
   page = signal<number>(1);
   elementsPerPage = signal<number>(10);
-  formSet: boolean = false;
-  sortSet: boolean = false;
-  defaultSearch: string = `${DB_URL}${BOOKS_URL}?_page=${this.page()}&_per_page=${this.elementsPerPage()}`;
+  formSet = false;
+  sortSet = false;
+  defaultSearch = `${DB_URL}${BOOKS_URL}?_page=${this.page()}&_per_page=${this.elementsPerPage()}`;
   queryDefaultValue: Query = {
     page: 1,
     elementsPerPage: 10,

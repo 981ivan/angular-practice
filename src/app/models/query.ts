@@ -1,4 +1,4 @@
-export type Query = {
+export interface Query {
   page: number;
   elementsPerPage: number;
   sortBy: string;

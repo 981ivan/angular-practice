@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, computed, effect, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Navbar } from './navbar';
 import { ManageBookForm } from './manage-book-form';
@@ -17,13 +17,16 @@ import { Book } from '../models/book';
       <app-manage-book-form
         [book]="bookToEditSave()"
         [editing]="!adding()"
-        (onSaveEdit)="saveEdit($event)"
+        (saveEdit)="saveEdit($event)"
       />
     }
   `,
   styles: ``,
 })
-export default class ManageBookPage implements OnInit, AfterViewInit {
+export default class ManageBookPage implements OnInit {
+  route = inject(ActivatedRoute);
+  http = inject(HttpClient);
+  router = inject(Router);
   adding = signal<boolean>(false);
   bookId = signal<number | null>(null);
   bookToAdd = signal<BookInterface>({
@@ -46,24 +49,16 @@ export default class ManageBookPage implements OnInit, AfterViewInit {
   });
   bookToEditSave = computed(() => this.bookToEdit.value() ?? this.bookToAdd());
 
-  constructor(
-    private route: ActivatedRoute,
-    private http: HttpClient,
-    private router: Router,
-  ) {}
-
   ngOnInit() {
     console.log(this.route);
     this.route.queryParams.subscribe((params) => {
-      if (!!params['addNewBook']) {
+      if (params['addNewBook']) {
         this.adding.set(true);
       } else {
         this.bookId.set(params['bookId']);
       }
     });
   }
-
-  ngAfterViewInit() {}
 
   saveEdit(ev: { method: string; book: Book }) {
     switch (ev.method) {

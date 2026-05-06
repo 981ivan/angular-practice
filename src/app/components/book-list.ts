@@ -52,8 +52,6 @@ export class BookList {
   orderedBy = output<string>();
   tableHeaderConfig: string[] = ['', 'title', 'author', 'year', 'language', 'country', ''];
 
-  constructor() {}
-
   order(key: string) {
     this.orderedBy.emit(key);
   }

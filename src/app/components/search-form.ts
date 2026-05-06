@@ -59,14 +59,14 @@ export class SearchForm {
     year: '',
   });
 
-  searchForm = form(this.formModel, (schemaPath) => {});
+  searchForm = form(this.formModel);
   allYearsAndLanguages = input<{ allYears: number[]; allLanguages: string[] }>();
-  search = output<SearchFormInterface>();
+  searchFiltered = output<SearchFormInterface>();
   cleanSearch = output();
 
   onSubmit(event: Event) {
     event.preventDefault();
-    this.search.emit(this.formModel());
+    this.searchFiltered.emit(this.formModel());
   }
 
   initialSearch() {

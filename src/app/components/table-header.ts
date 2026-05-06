@@ -7,7 +7,7 @@ import { UpperCasePipe } from '@angular/common';
   imports: [NgIcon, UpperCasePipe],
   standalone: true,
   template: `
-    <span (click)="orderList()">
+    <button (click)="orderList()" (keydown)="orderList()">
       @if (title()) {
         {{ title() | uppercase }}
       }
@@ -16,7 +16,7 @@ import { UpperCasePipe } from '@angular/common';
       } @else if (title() && sortBy() === '-' + title()) {
         <ng-icon name="coolCaretDownMD"></ng-icon>
       }
-    </span>
+    </button>
   `,
   styles: ``,
 })

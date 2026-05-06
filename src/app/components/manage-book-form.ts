@@ -1,4 +1,13 @@
-import { Component, computed, HostBinding, inject, input, output, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  HostBinding,
+  inject,
+  input,
+  OnInit,
+  output,
+  signal,
+} from '@angular/core';
 import { BookInterface } from '../models/book.interface';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -143,10 +152,10 @@ import { form, FormField, minLength, pattern, required } from '@angular/forms/si
   }`,
   styles: ``,
 })
-export class ManageBookForm {
-  @HostBinding('class.flex') someField: boolean = true;
-  @HostBinding('class.w-full') someOtherField: boolean = true;
-  @HostBinding('class.justify-center') anotherFieldInTheWall: boolean = true;
+export class ManageBookForm implements OnInit {
+  @HostBinding('class.flex') someField = true;
+  @HostBinding('class.w-full') someOtherField = true;
+  @HostBinding('class.justify-center') anotherFieldInTheWall = true;
   router = inject(Router);
   linkRegex = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
   book = input.required<BookInterface>();
@@ -167,7 +176,7 @@ export class ManageBookForm {
     pattern(schema.webLink, this.linkRegex, { message: 'Link must be valid!' });
   });
   editing = input<boolean>(false);
-  onSaveEdit = output<{ method: string; book: Book }>();
+  saveEdit = output<{ method: string; book: Book }>();
   title = computed(() => {
     if (this.editing()) {
       return 'Edit Book';
@@ -203,7 +212,7 @@ export class ManageBookForm {
       return;
     }
 
-    this.onSaveEdit.emit({
+    this.saveEdit.emit({
       method: this.editing() ? 'PATCH' : 'POST',
       book: this.bookForm().value(),
     });
