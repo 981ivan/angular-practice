@@ -152,6 +152,7 @@ export class HomePage implements OnInit {
     this.sortSet = true;
     this.selectedPage = 1;
     this.query.update((q) => ({ ...q, sortBy: key, page: 1 }));
+    this.page.update(p => 1);
     this.setApiQuery(this.query());
   }
 
