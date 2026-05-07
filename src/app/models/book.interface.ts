@@ -3,7 +3,7 @@ export interface BookInterface {
   author: string;
   country: string;
   language: string;
-  link: string;
+  webLink: string;
   pages: number;
   title: string;
   year: number;

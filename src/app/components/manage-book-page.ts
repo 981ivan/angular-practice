@@ -34,7 +34,7 @@ export default class ManageBookPage implements OnInit {
     author: '',
     country: '',
     language: '',
-    link: '',
+    webLink: '',
     pages: 0,
     title: '',
     year: 0,

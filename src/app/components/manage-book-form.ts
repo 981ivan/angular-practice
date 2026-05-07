@@ -196,7 +196,7 @@ export class ManageBookForm implements OnInit {
         author: this.book().author ?? '',
         country: this.book().country ?? '',
         language: this.book().language ?? '',
-        webLink: this.book().link ?? '',
+        webLink: this.book().webLink ?? '',
         pages: this.book().pages ?? undefined,
         title: this.book().title ?? '',
         year: this.book().year ?? undefined,

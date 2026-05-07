@@ -28,7 +28,7 @@ import { BeforeChristPipe } from '../../pipes/before-christ.pipe';
         <div class="grid grid-cols-12 gap-4 my-5">
           <div class="col-span-6"><span class="font-bold">Pages: </span>{{ book().pages }}</div>
           <div class="col-span-6">
-            <a [href]="book().link" target="_blank" [style.font-size.px]="16">
+            <a [href]="book().webLink" target="_blank" [style.font-size.px]="16">
               <ng-icon name="bootstrapWikipedia" />
             </a>
           </div>
